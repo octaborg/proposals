@@ -12,7 +12,7 @@ A person's financial transaction history is one of the most important and privat
 - Rewards systems such as credit card cashback schemes require access to a person's transactions by third parties.
 - Mobile payment wallets such as Google Pay could mine a person's transaction history data in order to provide a more personalized shopping experience.
 
-Mina Snapps provide a way to preserve privacy while also giving access to critical financial services by using off-chain verifiable computation through the use of ZK Snarks. This document intends to layout the possible use-cases, requirements and an architecture for a prototype Off-Chain Transaction Analytics System based on Snapps.
+Mina Snapps provide a way to preserve privacy while also giving access to critical financial services to users by using off-chain verifiable computation through the use of ZK Snarks. This document intends to layout the possible use-cases, requirements and an architecture for a prototype Off-Chain Transaction Analytics System based on Snapps.
 
 ## Use Cases/ Requirements
 
