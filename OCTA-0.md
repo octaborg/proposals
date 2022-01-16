@@ -19,8 +19,7 @@ Mina Snapps provide a way to preserve privacy while also giving access to critic
 
 Following are some simplified use cases for the prototype.
 
-TODO: Possibly a diagram of use cases.
-
+- As a lender I'm able to register in the system as being able to lend out a certain amount with a certain interest rate.
 - As a borrower I want to be able to request a loan from a lender registered on the system.
 - As a lender I want to be able to request a potential borrower to prove their regular income to be more than a certain amount(referred to as the _Regular Income Proof_) using their bank transaction records.
 - As a lender I want to be able to request a potential borrower to prove their average monthly balance to be more than a certain amount(Referred to as the _Average Monthly Balance Proof_) using their bank account balance and/or transactions.
@@ -30,7 +29,12 @@ TODO: Possibly a diagram of use cases.
 - As a lender I want to be able to verify the source of an Average Monthly Balance Proof as coming from the borrower's bank.
 - As a lender I want to be able to verify a Regular Income Proof.
 - As a lender I want to be able to verify an Average Monthly Balance Proof.
-- As a lender I want to be able to approve and disburse a loan if the required transaction activity proofs are satisfied.
+- As a lender I want to be able to approve and make a loan offer if the required transaction activity proofs are satisfied.
+- As a borrower I'm able to accept a loan offer if the conditions are agreeable, and receive the requested funds.
+
+### Expected Workflow
+
+![High level](OCTA-0/highlevel-prototype.png)
 
 ## Method
 
