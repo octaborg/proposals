@@ -1,9 +1,10 @@
-# Off-Chain Transaction Analytics System Prototype
+# Off Chain Transaction Analytics System Prototype
 
 ## Abstract
 
- TODO
- 
+Off Chain Transaction Analytics(OCTA) system prototype is a proof of concept system that provides an off-chain transaction analytics system (OCTA for short) using Mina Snapps smart contracts. The motivation of it is to provide a way for the users to protect their sensitive financial data without exposing it to a third party while also gaining access to critical financial services such as credit. Such a system, with the aid of zk-SNARK technology, would allow one to prove one's own financial standing using their verified transaction history records without the need of any centralized party's approval. The prototype would provide a basic protocol and a set of tools for all the actors: lenders, borrowers and financial data repositories. We also aim to provide example use-cases such as proving a borrower's average income over a requested period of time by a lender. Those examples would demonstrate how MINA Snapps could affect daily interactions involving financial data improving their security and privacy.
+
+
 ## Background
 
 A person's financial transaction history is one of the most important and private aspects of their lives. A party gaining access to this information could in theory understand a person's social/financial standing, inter-personal relationships and even health. But some parts of the present financial system is built on users readily handing over this information in exchange for critical financial services or even worse without them even knowing or benefiting from it. This leads to a breach of privacy as well as possibly exposing this data to unintended parties. Eg:
