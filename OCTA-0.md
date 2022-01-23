@@ -10,13 +10,31 @@ Table of Contents
 -   [4. Method](#_method)
     -   [4.1. Proposed Prototype System
         Overview](#_proposed_prototype_system_overview)
-    -   [4.2. Interface: Loan Index Smart
-        Contract](#_interface_loan_index_smart_contract)
+    -   [4.2. Interface: Loan Index Smart Contract
+        (LISC)](#_interface_loan_index_smart_contract_lisc)
     -   [4.3. Interface: Loan Smart Contract
         (LSC)](#_interface_loan_smart_contract_lsc)
+        -   [4.3.1. TransactionDataProofs](#_transactiondataproofs)
     -   [4.4. Component: Transaction Data
         Repository](#_component_transaction_data_repository)
+        -   [4.4.1. Component: HTTPS API](#_component_https_api)
+            -   [Calculating the Signature](#_calculating_the_signature)
+        -   [4.4.2. Component: Data Store](#_component_data_store)
+    -   [4.5. Component: Lender App](#_component_lender_app)
+    -   [4.6. Component: Borrower App](#_component_borrower_app)
+        -   [4.6.1. Algorithm: Apply for a
+            Loan](#_algorithm_apply_for_a_loan)
 -   [5. Implementation](#_implementation)
+
+-   **Status:** DRAFT
+
+-   **Scope:** Internal
+
+-   **Changelog:**
+
+    -   v.0.0.1
+
+        -   Abstract, Background and initial parts of Method added.
 
 ## 1. Abstract
 
@@ -127,7 +145,7 @@ Following are some simplified use cases for the prototype.
 
 <img src="OCTA-0/prototype-overview.png" width="543" height="803" alt="prototype overview" />
 
-### 4.2. Interface: Loan Index Smart Contract
+### 4.2. Interface: Loan Index Smart Contract (LISC)
 
 A simple smart contract that holds the account addresses of the
 currently published loan smart contracts in the system. The use of this
@@ -207,13 +225,21 @@ A REST API that received requests and provides signed transactions
 data(stored in it’s database) in return. Signature scheme could follow
 the same as [what is used by
 Mina](https://github.com/MinaProtocol/mina/blob/develop/docs/specs/signatures/description.md).
-Further details should be specified with research.
+Further details should be specified with research. For example the way
+to convert to fields, sign and prove parts of the transactions that are
+strings. A possible approach is using a merkle tree. The data format
+sent of over the wire could possibly use [Google
+Protobuf](https://developers.google.com/protocol-buffers).
 
-Endpoint
+Endpoint format,
 
 -   **HTTPS GET /api/transactions**
 
--   Format of output returned would follow,
+-   **Headers**
+
+    -   x-signature: Signature for the payload
+
+-   **Body** format of the output would follow,
 
         {
           "id": "id of the account",
@@ -233,14 +259,59 @@ Endpoint
 
         }
 
+##### Calculating the Signature
+
+TODO R&D
+
 #### 4.4.2. Component: Data Store
 
 This is a mock database of transactions stored as a json file based on
 the transaction format described above.
 
-5. Implementation
------------------
+### 4.5. Component: Lender App
+
+The Lender App serves as the user interface for lenders for performing
+the following actions,
+
+1.  Deploy new LSC to Mina.
+
+2.  Register the LSC on LISC (index).
+
+3.  View loans deployed.
+
+4.  View loan requests.
+
+5.  Approve loan requests.
+
+<img src="OCTA-0/lender-app.png" width="764" height="544" alt="lender app" />
+
+The flow outlined is proposed to be built as typescript/react app
+integrated with snarkyjs.
+
+### 4.6. Component: Borrower App
+
+The Borrower App serves as the user interface for borrowers for
+performing the following actions.
+
+1.  Browse available loans
+
+2.  Apply for a loan.
+
+3.  Accept a loan.
+
+4.  Browse already borrowed loans.
+
+<img src="OCTA-0/borrower-app.png" width="904" height="329" alt="borrower app" />
+
+#### 4.6.1. Algorithm: Apply for a Loan
+
+Applying for a loan involves the invocation of `LSC.requestLoan` method
+with calculated required proofs.
+
+TODO R&D
+
+## 5. Implementation
 
 1.  TODO milestones etc. key results
 
-Last updated 2022-01-22 22:03:02 +0100
+Last updated 2022-01-23 19:56:03 +0100
