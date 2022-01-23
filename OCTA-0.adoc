@@ -46,8 +46,8 @@ Following are some simplified use cases for the prototype.
 . As a lender I want to be able to verify an Average Monthly Balance Proof.
 . As a lender I want to be able to approve and make a loan offer if the required transaction activity proofs are satisfied.
 . As a borrower I'm able to accept a loan offer if the conditions are agreeable, and receive the requested funds.
-[Optional] As a Snapp developer I want to be able to write a Snapp that is capable of applying for loans using OCTA protocol
-[Optional] As a Snapp developer I want to be able to write a Snapp that is capable of offering loans using OCTA protocol
+. [Optional] As a Snapp developer I want to be able to write a Snapp that is capable of applying for loans using OCTA protocol
+. [Optional] As a Snapp developer I want to be able to write a Snapp that is capable of offering loans using OCTA protocol
 
 === Expected Workflow
 
@@ -148,7 +148,7 @@ class Loan extends SmartContract {
   @state(Field) interestRate: State<Field>;
   @state(Field) termInDays: State<Field>;
 
-  // Terms of the loan are injected at construction
+  // Terms of the loan are injected at construction. Called by the lender.
   constructor(
     loanAmount: UInt64,
     interestRate: Field;
@@ -162,16 +162,18 @@ class Loan extends SmartContract {
     this.termInDays = State.init(termInDays);
   }
 
-  // Request a loan with required proofs
+  // Request a loan with required proofs. Called by the borrower
   @method async requestLoan(amount: UInt64, proofs: TransactionDataProofs) { <2>
     <3>
   }
 
-  // Approve the loan for the given address
+  // Approve the loan for the given address. Called by the lender.
+  // This would be useful when lenders optimize on the type of borrowers
+  // based on the demand and other factors.
   @method async approve(address: PublicKey) {
   }
 
-  // Accept the loan for the calling address
+  // Accept the loan for the calling address. Called by the borrower.
   @method async accept() {
   }
 
@@ -183,7 +185,7 @@ class Loan extends SmartContract {
 
 ==== TransactionDataProofs
 
-This is a new `proofSystem` for transaction statistics based on off chain transaction data. It also needs to index the proofs it's provided to be able to be verified based on the `requireProofs` field of the LSC.
+This is a new https://github.com/o1-labs/snarkyjs/blob/2a8f64a764917d53fd5fa5e807d7159f89f47545/src/examples/wip.ts#L101[proofSystem] for transaction statistics based on off chain transaction data. It also needs to index the proofs it's provided to be able to be verified based on the `requireProofs` field of the LSC.
 
 TODO R&D
 

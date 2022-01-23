@@ -27,12 +27,12 @@ Table of Contents
 -   [5. Implementation](#_implementation)
 
 Document Metadata
-  
-- **Status:** DRAFT
 
-- **Scope:** Internal
+-   **Status:** DRAFT
 
-- **Changelog:**
+-   **Scope:** Internal
+
+-   **Changelog:**
 
     -   v.0.0.1
 
@@ -59,36 +59,39 @@ improving their security and privacy.
 ## 2. Background
 
 A person’s financial transaction history is one of the most important
-and private aspects of their lives. A party gaining access to this
+and private aspects of their lives. A third party gaining access to this
 information could in theory understand a person’s social/financial
-standing, inter-personal relationships and even health. But some parts
-of the present financial system is built on users readily handing over
-this information in exchange for critical financial services or even
-worse without them even knowing or benefiting from it. This leads to a
-breach of privacy as well as possibly exposing this data to unintended
-parties. Eg:
+standing, inter-personal relationships and even health. As for now, many
+aspects of the present financial system is built on users voluntarily
+handing over this information in exchange for granting access to
+critical financial services. It often occurs without them being aware of
+the benefits the third party acquires from their data. This leads to a
+breach of privacy that could possibly lead to exposing this sensitive
+data to unintended parties. Eg:
 
 -   All non-collateralized lending systems require some form of
     transaction history analysis/verification to understand the
     borrower’s financial standing. Most common way to do achieve this at
-    the moment is through a personal credit score that’s provided by a
-    centralized entity that tracks the transactional habits. This has
-    lead to [massive data
+    the moment is through a personal credit score that is provided by a
+    centralized entity that tracks the transactional habits between all
+    the parties. This caused [massive data
     breaches](https://en.wikipedia.org/wiki/2017_Equifax_data_breach) in
     the past.
 
--   Rewards systems such as credit card cashback schemes require access
-    to a person’s transactions by third parties.
+-   Rewards systems such as credit card cashback schemes require
+    explicitly access to one’s raw transaction history by a third party.
 
--   Mobile payment wallets such as Google Pay could mine a person’s
-    transaction history data in order to provide a more personalized
-    shopping experience.
+-   Mobile payment wallets such as Google Pay could mine a user’s
+    transaction history data to provide a more personalized shopping
+    experience.
 
-Mina Snapps provide a way to preserve privacy while also giving access
-to critical financial services to users by using off-chain verifiable
-computation through the use of ZK Snarks. This document intends to
-layout the possible use-cases, requirements and an architecture for a
-prototype Off-Chain Transaction Analytics System based on Snapps.
+To face this problem, Mina Snapps have potential to provide a solution
+that preserves user’s privacy without compromising the access to
+critical financial services. In our scheme, this is achieved using
+off-chain verifiable computation with aid of ZK-Snarks. This manuscript
+is a brief introduction to this idea, with potential use-cases,
+requirements and a draft of an architecture for a prototype Off-Chain
+Transaction Analytics system powered by MINA Snapps.
 
 ## 3. Use Cases/ Requirements
 
@@ -137,6 +140,12 @@ Following are some simplified use cases for the prototype.
 13. As a borrower I’m able to accept a loan offer if the conditions are
     agreeable, and receive the requested funds.
 
+14. \[Optional\] As a Snapp developer I want to be able to write a Snapp
+    that is capable of applying for loans using OCTA protocol
+
+15. \[Optional\] As a Snapp developer I want to be able to write a Snapp
+    that is capable of offering loans using OCTA protocol
+
 ### 3.1. Expected Workflow
 
 <img src="OCTA-0/highlevel-prototype.png" width="806" height="979" alt="highlevel prototype" />
@@ -167,7 +176,7 @@ following.
       @state(Field) interestRate: State<Field>;
       @state(Field) termInDays: State<Field>;
 
-      // Terms of the loan are injected at construction
+      // Terms of the loan are injected at construction. Called by the lender.
       constructor(
         loanAmount: UInt64,
         interestRate: Field;
@@ -181,16 +190,18 @@ following.
         this.termInDays = State.init(termInDays);
       }
 
-      // Request a loan with required proofs
+      // Request a loan with required proofs. Called by the borrower
       @method async requestLoan(amount: UInt64, proofs: TransactionDataProofs) { (2)
         (3)
       }
 
-      // Approve the loan for the given address
+      // Approve the loan for the given address. Called by the lender.
+      // This would be useful when lenders optimize on the type of borrowers
+      // based on the demand and other factors.
       @method async approve(address: PublicKey) {
       }
 
-      // Accept the loan for the calling address
+      // Accept the loan for the calling address. Called by the borrower.
       @method async accept() {
       }
 
@@ -209,9 +220,11 @@ following.
 
 #### 4.3.1. TransactionDataProofs
 
-This is a new `proofSystem` for transaction statistics based on off
-chain transaction data. It also needs to index the proofs it’s provided
-to be able to be verified based on the `requireProofs` field of the LSC.
+This is a new
+[proofSystem](https://github.com/o1-labs/snarkyjs/blob/2a8f64a764917d53fd5fa5e807d7159f89f47545/src/examples/wip.ts#L101)
+for transaction statistics based on off chain transaction data. It also
+needs to index the proofs it’s provided to be able to be verified based
+on the `requireProofs` field of the LSC.
 
 TODO R&D
 
