@@ -1,6 +1,16 @@
 = Off Chain Transaction Analytics System Prototype
 :toc:
+:toclevels: 5
 :sectnums:
+
+====
+* *Status:* DRAFT
+* *Scope:* Internal
+* *Changelog:*
+** v.0.0.1
+*** Abstract, Background and initial parts of Method added.
+
+====
 
 == Abstract
 
@@ -117,7 +127,7 @@ ba --> lsc : request\nloan\nwith\nproofs
 la --> lsc : view loan\nrequests\n(and approve)
 -----
 
-=== Interface: Loan Index Smart Contract
+=== Interface: Loan Index Smart Contract (LISC)
 
 A simple smart contract that holds the account addresses of the currently published loan smart contracts in the system. The use of this is for the borrowers to be able to browse and see details of the available loan contracts in the system.
 
@@ -179,12 +189,14 @@ This is a separate service representing a transaction storage backend for exampl
 
 ==== Component: HTTPS API
 
-A REST API that received requests and provides signed transactions data(stored in it's database) in return. Signature scheme could follow the same as https://github.com/MinaProtocol/mina/blob/develop/docs/specs/signatures/description.md[what is used by Mina]. Further details should be specified with research.
+A REST API that received requests and provides signed transactions data(stored in it's database) in return. Signature scheme could follow the same as https://github.com/MinaProtocol/mina/blob/develop/docs/specs/signatures/description.md[what is used by Mina]. Further details should be specified with research. For example the way to convert to fields, sign and prove parts of the transactions that are strings. A possible approach is using a merkle tree. The data format sent of over the wire could possibly use https://developers.google.com/protocol-buffers[Google Protobuf].
+====
+Endpoint format,
 
-Endpoint
-
-- *HTTPS GET /api/transactions*
-- Format of output returned would follow,
+* *HTTPS GET /api/transactions*
+* *Headers*
+** x-signature: Signature for the payload
+* *Body* format of the output would follow,
 +
 [source,json]
 ----
@@ -206,10 +218,207 @@ Endpoint
 
 }
 ----
+====
+
+===== Calculating the Signature
+
+TODO R&D
 
 ==== Component: Data Store
 
 This is a mock database of transactions stored as a json file based on the transaction format described above.
+
+=== Component: Lender App
+
+The Lender App serves as the user interface for lenders for performing the following actions,
+
+. Deploy new LSC to Mina.
+. Register the LSC on LISC (index).
+. View loans deployed.
+. View loan requests.
+. Approve loan requests.
+
+[plantuml,OCTA-0/lender-app,png]
+----
+@startuml
+(*) --> "
+{{
+salt
+{+
+{* **New Loan** | View Loans}
+Amount | "10,000"
+Term | "18 Months"
+Interest Rate | "8%"
+[X] Register on Index
+[Deploy]|[Clear]
+}
+}}
+" as new
+
+new -right-> "
+{{
+salt
+{+
+<b>Success
+Contract Address: <sadsafw>
+[ok]
+}
+}}
+" as success
+
+new -right-> "
+{{
+salt
+{+
+<b>Error
+failed, sorry
+[ok]
+}
+}}
+" as error
+
+new -down-> "
+{{
+salt
+{+
+{* New Loan | **View Loans**}
+{#
+Address | Amount | Available Amount | Interest Rate | Term | Actions
+abcd | 10,000 | 1200 | 7.5% | 3 months | [Borrowers]
+abaad | 15,000 | 14000 | 6% | 12 months | [Borrowers]
+}
+}
+}}
+" as view
+
+
+view -down-> "
+{{
+salt
+{+
+Borrowers for Loan **abcd**
+{#
+Address | Amount | Actions
+xxxx | 1200 | [Approve]|[Reject]
+yyyy | 8800 |
+}
+[back]
+}
+}}
+" as borrowers
+
+borrowers -> view
+
+
+borrowers -right-> "
+{{
+salt
+{+
+<b>Success
+[ok]
+}
+}}
+"
+
+borrowers -right-> "
+{{
+salt
+{+
+<b>Error
+failed, sorry
+[ok]
+}
+}}
+"
+
+@enduml
+----
+
+The flow outlined is proposed to be built as typescript/react app integrated with snarkyjs.
+
+=== Component: Borrower App
+
+The Borrower App serves as the user interface for borrowers for performing the following actions.
+
+. Browse available loans
+. Apply for a loan.
+. Accept a loan.
+. Browse already borrowed loans.
+
+[plantuml,OCTA-0/borrower-app,png]
+----
+@startuml
+(*) -down-> "
+{{
+salt
+{+
+{* Own Loans | **Available Loans**}
+{#
+Address | Amount | Available Amount | Interest Rate | Term | Actions
+abcd | 10,000 | 1200 | 7.5% | 3 months | [Apply]
+abaad | 15,000 | 14000 | 6% | 12 months | [Apply]
+}
+}
+}}
+" as view
+
+view --> "
+{{
+salt
+{+
+{* **Own Loans** | Available Loans}
+{#
+Address | Principle | Interest Rate | Term Left
+xxx | 2000 | 7.5% | 1 month
+yyy | 500 | 6% | 2 days
+}
+}
+}}
+"
+
+view -down-> "
+{{
+salt
+{+
+<b> Apply for Loan abcd
+Amount | "2,000"
+[OK]|[Cancel]
+}
+}}
+" as apply
+
+apply -up-> view
+
+apply -right-> "
+{{
+salt
+{+
+<b>Success
+[ok]
+}
+}}
+"
+
+apply -right-> "
+{{
+salt
+{+
+<b>Error
+failed, sorry
+[ok]
+}
+}}
+"
+
+@enduml
+----
+
+==== Algorithm: Apply for a Loan
+
+Applying for a loan involves the invocation of `LSC.requestLoan` method with calculated required proofs.
+
+TODO R&D
+
 
 == Implementation
 
