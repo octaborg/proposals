@@ -26,11 +26,13 @@ Table of Contents
             Loan](#_algorithm_apply_for_a_loan)
 -   [5. Implementation](#_implementation)
 
--   **Status:** DRAFT
+Document Metadata
+  
+- **Status:** DRAFT
 
--   **Scope:** Internal
+- **Scope:** Internal
 
--   **Changelog:**
+- **Changelog:**
 
     -   v.0.0.1
 
