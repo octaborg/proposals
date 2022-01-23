@@ -183,16 +183,18 @@ class Loan extends SmartContract {
 <2> TransactionDataProofs is a https://github.com/o1-labs/snarkyjs/blob/2a8f64a764917d53fd5fa5e807d7159f89f47545/src/examples/wip.ts#L101[proofSystem] that need to be defined based on further research.
 <3> Verify proofs. Then at the initial phase possibly disburse the loan. Later an approval method would be implemented together with support for accepting the loan by the borrower to disburse the loan.
 
-==== TransactionDataProofs
+==== RequiredProofs & TransactionDataProofs
 
 This is a new https://github.com/o1-labs/snarkyjs/blob/2a8f64a764917d53fd5fa5e807d7159f89f47545/src/examples/wip.ts#L101[proofSystem] for transaction statistics based on off chain transaction data. It also needs to index the proofs it's provided to be able to be verified based on the `requireProofs` field of the LSC.
 
 TODO R&D
 
+[#_component_transaction_data_repository]
 === Component: Transaction Data Repository
 
 This is a separate service representing a transaction storage backend for example of a bank. Proposed to be implemented as a nodejs application.
 
+[#_component_https_api]
 ==== Component: HTTPS API
 
 A REST API that received requests and provides signed transactions data(stored in it's database) in return. Signature scheme could follow the same as https://github.com/MinaProtocol/mina/blob/develop/docs/specs/signatures/description.md[what is used by Mina]. Further details should be specified with research. For example the way to convert to fields, sign and prove parts of the transactions that are strings. A possible approach is using a merkle tree. The data format sent of over the wire could possibly use https://developers.google.com/protocol-buffers[Google Protobuf].
@@ -226,6 +228,7 @@ Endpoint format,
 ----
 ====
 
+[#_calculating_the_signature]
 ===== Calculating the Signature
 
 TODO R&D
@@ -234,6 +237,7 @@ TODO R&D
 
 This is a mock database of transactions stored as a json file based on the transaction format described above.
 
+[#_component_lender_app]
 === Component: Lender App
 
 The Lender App serves as the user interface for lenders for performing the following actions,
@@ -342,6 +346,7 @@ failed, sorry
 
 The flow outlined is proposed to be built as typescript/react app integrated with snarkyjs.
 
+[#_component_borrower_app]
 === Component: Borrower App
 
 The Borrower App serves as the user interface for borrowers for performing the following actions.
@@ -419,6 +424,17 @@ failed, sorry
 @enduml
 ----
 
+[#_component_transaction_data_downloadersignature_verifier]
+==== Component: Transaction Data Downloader/Signature Verifier
+
+TODO R&D
+
+[#_component_transaction_data_json_to_field_converter]
+==== Component: Transaction Data JSON to Field Converter
+
+TODO R&D
+
+[#_algorithm_apply_for_a_loan]
 ==== Algorithm: Apply for a Loan
 
 Applying for a loan involves the invocation of `LSC.requestLoan` method with calculated required proofs.
@@ -428,4 +444,50 @@ TODO R&D
 
 == Implementation
 
-.. TODO milestones etc. key results
+The implementation of this prototype would happen in two phases.
+
+=== Phase 1: Basic End to End Flow
+
+In this phase the major focus is on getting the Snapp working end to end while completing major research items. Key results,
+. A lender is able to deploy a loan on-chain.
+. A borrower is able to request data from the Transaction Data Repository.
+. A borrower is able to calculate required proofs using the data returned.
+. A borrower is able to call `LSC.requestLoan` method using required proofs.
+
+This phase is expected to complete roughly 6 (?) weeks.
+
+==== Implement the Transaction Data Repository Component
+
+Refer <<_component_transaction_data_repository>> for details.
+
+* [ ] Create the basic app skeleton with Nodejs/Typescript/Protobuf combo?
+* [ ] Define the transaction data format using Protobuf?
+* [ ] R&D on signature scheme based on transaction data format. Refer <<_calculating_the_signature>>.
+* [ ] Implement <<_component_https_api>>.
+
+==== Implement the Basic LSC
+
+Refer <<Interface: Loan Smart Contract (LSC)>> for details.
+
+* [ ] Research and define the `RequiredProofs` data structure and the `TransactionDataProofs` proofSystem.
+* [ ] Research and implement the circuit to prove a past 3 months average income is over x threshold proof(`RequiredProofs`) using `TransactionDataProofs`.
+* [ ] Research how `TransactionDataProofs` could be extended to support `RequiredProofs` with multiple proofs required.
+* [ ] Implement the LSC contract with the constructor to deploy a loan.
+* [ ] Implement the `LSC.requestLoan` method.
+
+==== Implement the Basic Borrower App
+
+Refer <<_component_borrower_app>> for details.
+
+* [ ] Setup the basic skeleton of the app using snapps cli without any UI parts.
+* [ ] Research and implement <<_component_transaction_data_downloadersignature_verifier>>.
+* [ ] Research and implement <<_component_transaction_data_json_to_field_converter>>.
+* [ ] Research and implement <<_algorithm_apply_for_a_loan>> without the UI involvement.
+
+==== Implement the Basic Lender App
+
+Refer <<_component_lender_app>> for details.
+
+* [ ] Setup the basic skeleton of the app using snapps cli without any UI parts.
+* [ ] Research and implement the deployment of the LSC contract given the constructor parameters with or without the UI.
+
