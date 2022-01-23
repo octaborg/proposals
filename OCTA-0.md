@@ -14,7 +14,8 @@ Table of Contents
         (LISC)](#_interface_loan_index_smart_contract_lisc)
     -   [4.3. Interface: Loan Smart Contract
         (LSC)](#_interface_loan_smart_contract_lsc)
-        -   [4.3.1. TransactionDataProofs](#_transactiondataproofs)
+        -   [4.3.1. RequiredProofs &
+            TransactionDataProofs](#_requiredproofs_transactiondataproofs)
     -   [4.4. Component: Transaction Data
         Repository](#_component_transaction_data_repository)
         -   [4.4.1. Component: HTTPS API](#_component_https_api)
@@ -22,9 +23,22 @@ Table of Contents
         -   [4.4.2. Component: Data Store](#_component_data_store)
     -   [4.5. Component: Lender App](#_component_lender_app)
     -   [4.6. Component: Borrower App](#_component_borrower_app)
-        -   [4.6.1. Algorithm: Apply for a
+        -   [4.6.1. Component: Transaction Data Downloader/Signature
+            Verifier](#_component_transaction_data_downloadersignature_verifier)
+        -   [4.6.2. Component: Transaction Data JSON to Field
+            Converter](#_component_transaction_data_json_to_field_converter)
+        -   [4.6.3. Algorithm: Apply for a
             Loan](#_algorithm_apply_for_a_loan)
 -   [5. Implementation](#_implementation)
+    -   [5.1. Phase 1: Basic End to End
+        Flow](#_phase_1_basic_end_to_end_flow)
+        -   [5.1.1. Implement the Transaction Data Repository
+            Component](#_implement_the_transaction_data_repository_component)
+        -   [5.1.2. Implement the Basic LSC](#_implement_the_basic_lsc)
+        -   [5.1.3. Implement the Basic Borrower
+            App](#_implement_the_basic_borrower_app)
+        -   [5.1.4. Implement the Basic Lender
+            App](#_implement_the_basic_lender_app)
 
 Document Metadata
 
@@ -218,7 +232,7 @@ following.
     Later an approval method would be implemented together with support
     for accepting the loan by the borrower to disburse the loan.
 
-#### 4.3.1. TransactionDataProofs
+#### 4.3.1. RequiredProofs & TransactionDataProofs
 
 This is a new
 [proofSystem](https://github.com/o1-labs/snarkyjs/blob/2a8f64a764917d53fd5fa5e807d7159f89f47545/src/examples/wip.ts#L101)
@@ -318,7 +332,15 @@ performing the following actions.
 
 <img src="OCTA-0/borrower-app.png" width="904" height="329" alt="borrower app" />
 
-#### 4.6.1. Algorithm: Apply for a Loan
+#### 4.6.1. Component: Transaction Data Downloader/Signature Verifier
+
+TODO R&D
+
+#### 4.6.2. Component: Transaction Data JSON to Field Converter
+
+TODO R&D
+
+#### 4.6.3. Algorithm: Apply for a Loan
 
 Applying for a loan involves the invocation of `LSC.requestLoan` method
 with calculated required proofs.
@@ -327,6 +349,78 @@ TODO R&D
 
 ## 5. Implementation
 
-1.  TODO milestones etc. key results
+The implementation of this prototype would happen in two phases.
 
-Last updated 2022-01-23 19:56:03 +0100
+### 5.1. Phase 1: Basic End to End Flow
+
+In this phase the major focus is on getting the Snapp working end to end
+while completing major research items. Key results, . A lender is able
+to deploy a loan on-chain. . A borrower is able to request data from the
+Transaction Data Repository. . A borrower is able to calculate required
+proofs using the data returned. . A borrower is able to call
+`LSC.requestLoan` method using required proofs.
+
+This phase is expected to complete roughly 6 (?) weeks.
+
+#### 5.1.1. Implement the Transaction Data Repository Component
+
+Refer [Component: Transaction Data
+Repository](#_component_transaction_data_repository) for details.
+
+-   ❏ Create the basic app skeleton with Nodejs/Typescript/Protobuf
+    combo?
+
+-   ❏ Define the transaction data format using Protobuf?
+
+-   ❏ R&D on signature scheme based on transaction data format. Refer
+    [Calculating the Signature](#_calculating_the_signature).
+
+-   ❏ Implement [Component: HTTPS API](#_component_https_api).
+
+#### 5.1.2. Implement the Basic LSC
+
+Refer [Interface: Loan Smart Contract
+(LSC)](#_interface_loan_smart_contract_lsc) for details.
+
+-   ❏ Research and define the `RequiredProofs` data structure and the
+    `TransactionDataProofs` proofSystem.
+
+-   ❏ Research and implement the circuit to prove a past 3 months
+    average income is over x threshold proof(`RequiredProofs`) using
+    `TransactionDataProofs`.
+
+-   ❏ Research how `TransactionDataProofs` could be extended to support
+    `RequiredProofs` with multiple proofs required.
+
+-   ❏ Implement the LSC contract with the constructor to deploy a loan.
+
+-   ❏ Implement the `LSC.requestLoan` method.
+
+#### 5.1.3. Implement the Basic Borrower App
+
+Refer [Component: Borrower App](#_component_borrower_app) for details.
+
+-   ❏ Setup the basic skeleton of the app using snapps cli without any
+    UI parts.
+
+-   ❏ Research and implement [Component: Transaction Data
+    Downloader/Signature
+    Verifier](#_component_transaction_data_downloadersignature_verifier).
+
+-   ❏ Research and implement [Component: Transaction Data JSON to Field
+    Converter](#_component_transaction_data_json_to_field_converter).
+
+-   ❏ Research and implement [Algorithm: Apply for a
+    Loan](#_algorithm_apply_for_a_loan) without the UI involvement.
+
+#### 5.1.4. Implement the Basic Lender App
+
+Refer [Component: Lender App](#_component_lender_app) for details.
+
+-   ❏ Setup the basic skeleton of the app using snapps cli without any
+    UI parts.
+
+-   ❏ Research and implement the deployment of the LSC contract given
+    the constructor parameters with or without the UI.
+
+Last updated 2022-01-23 21:16:35 +0100
